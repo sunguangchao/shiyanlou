@@ -71,7 +71,7 @@ public class FireEditor extends JFrame {
     }
 
     private void saveFile() {
-        FileDialog dg = new FileDialog(this,"save file");
+        FileDialog dg = new FileDialog(this,"save file");//创建一个具有指定标题的文件对话框窗口，用于加载文件
         dg.setFile("untitled.txt");
         dg.setMode(FileDialog.SAVE);//设置为保存模式
         dg.setVisible(true);
@@ -79,13 +79,13 @@ public class FireEditor extends JFrame {
         String dir = dg.getDirectory();//获取对话框的当前目录
 
         //根据目录名、文件名创建一个文件，即要保存的目标文件
-        File newFile = new File(dir + File.separator+fileName);
-        PrintWriter pw = null;
+        File newFile = new File(dir + File.separator+fileName);//通过将给定路径名字符串转换成抽象路径名来创建一个新 File 实例
+        PrintWriter pw = null;//PrintWriter：向文本输出流打印对象的格式化表示形式
         try{
             pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(newFile)));
             String str = editArea.getText();
             pw.println(str);
-            pw.flush();
+            pw.flush();//通过将所有已缓冲输出写入基础流来刷新此流。
         }catch (IOException e)
         {
             e.printStackTrace();
