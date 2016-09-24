@@ -16,17 +16,17 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
     Thread compiler = null;
     Thread run_prom = null;
     boolean bn = true;
-    CardLayout mycard;
+    CardLayout mycard;//声明布局
     File file_saved = null;
-    JButton button_input_txt,
+    JButton button_input_txt,//定义按钮
             button_compiler_text,
             button_compiler,
             button_run_prom,
             button_see_doswin;
     JPanel p = new JPanel();
-    JTextArea input_text = new JTextArea();
-    JTextArea compiler_text = new JTextArea();
-    JTextArea dos_out_text = new JTextArea();
+    JTextArea input_text = new JTextArea();//程序输入区
+    JTextArea compiler_text = new JTextArea();//编译错误显示区
+    JTextArea dos_out_text = new JTextArea();//程序的输出信息
 
     JTextField input_file_name_text = new JTextField();
     JTextField run_file_name_text = new JTextField();
@@ -43,8 +43,8 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
         button_compiler = new JButton("编译程序");
         button_run_prom = new JButton("运行程序");
 
-        p.setLayout(mycard);
-        p.add("input",input_text);
+        p.setLayout(mycard);//设置卡片布局
+        p.add("input",input_text);//定义卡片名称
         p.add("compiler",compiler_text);
         p.add("dos",dos_out_text);
         add(p,"Center");
@@ -53,7 +53,7 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
         dos_out_text.setBackground(Color.cyan);
         JPanel p1 = new JPanel();
 
-        p1.setLayout(new GridLayout(3,3));
+        p1.setLayout(new GridLayout(3,3));//设置表格布局
 
         p1.add(button_input_txt);
         p1.add(button_compiler_text);
@@ -66,6 +66,7 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
         p1.add(button_run_prom);
         add(p1,"North");
 
+        //定义事件
         button_input_txt.addActionListener(this);
         button_compiler.addActionListener(this);
         button_compiler_text.addActionListener(this);
@@ -75,20 +76,20 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
 
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource() == button_input_txt)
+        if(e.getSource() == button_input_txt)//程序输入区
         {
             mycard.show(p,"input");
         }
-        else if(e.getSource() == button_compiler_text)
+        else if(e.getSource() == button_compiler_text)//编译结果区
         {
             mycard.show(p,"compiler");
         }
-        else if(e.getSource() == button_see_doswin)
+        else if(e.getSource() == button_see_doswin)//程序运行结果
         {
             mycard.show(p,"dos");
-        }else if(e.getSource() == button_compiler)
+        }else if(e.getSource() == button_compiler)//编译程序
         {
-            if(!(compiler.isAlive()))
+            if(!(compiler.isAlive()))//测试线程是否处于活动状态
             {
                 compiler = new Thread(this);
             }
@@ -100,7 +101,7 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
             }
 
             mycard.show(p,"compiler");
-        }else if(e.getSource() == button_run_prom)
+        }else if(e.getSource() == button_run_prom)//运行程序
         {
             if(!(run_prom.isAlive()))
             {
@@ -108,8 +109,8 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
             }
             try{
                 run_prom.start();
-            }catch (Exception e3){
-                e3.printStackTrace();
+            }catch (Exception e2){
+                e2.printStackTrace();
             }
             mycard.show(p,"dos");
         }
@@ -138,8 +139,10 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
             }
 
             try{
+                //获得该进程的错误流，才可以知道运行结果到底是失败了还是成功。
                 Runtime rt = Runtime.getRuntime();
                 InputStream in = rt.exec("javac "+file_name).getErrorStream();
+                //通过Runtime调用javac命令。注意：“javac ”这个字符串是有一个空格的！！
                 BufferedInputStream bufIn = new BufferedInputStream(in);
                 byte[] shuzu = new byte[100];
                 int n = 0;
@@ -155,7 +158,7 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
                         flag = false;
                     }
                 }
-                if(flag)
+                if(flag) //判断是否编译成功
                 {
                     compiler_text.append("Compiler Succeed!");
                 }
@@ -165,6 +168,7 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
         }
         else if(Thread.currentThread() == run_prom){
             dos_out_text.setText(null);
+            //运行文件，并将结果输出到dos_out_text
 
             try{
                 Runtime rt = Runtime.getRuntime();
@@ -184,7 +188,8 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
                 String s = null;
                 String err = null;
 
-                while((m = bisIn.read(buf,0,150))!= -1)
+                //打印编译信息及错误信息
+                while((m = bisIn.read(buf,0,150)) != -1)
                 {
                     s = new String(buf,0,150);
                     dos_out_text.append(s);
