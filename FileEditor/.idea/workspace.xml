@@ -24,8 +24,8 @@
       <file leaf-file-name="FireEditor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/FireEditor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-481">
-              <caret line="110" column="35" selection-start-line="110" selection-start-column="35" selection-end-line="110" selection-end-column="35" />
+            <state relative-caret-position="-3103">
+              <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -544,8 +544,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/FireEditor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-481">
-          <caret line="110" column="35" selection-start-line="110" selection-start-column="35" selection-end-line="110" selection-end-column="35" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/FireEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/FireEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3103">
+          <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

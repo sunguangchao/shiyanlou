@@ -43,7 +43,7 @@ public class FireEditor extends JFrame {
          //新建一个流布局，并且左对齐的面板
         JPanel upPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         upPanel.setBackground(Color.CYAN);
-        upPanel.add(selectField);
+        upPanel.add(selectField);//将选择框加入画板中
         upPanel.add(openFileBtn);
         this.add(upPanel, BorderLayout.NORTH);
 
@@ -70,9 +70,9 @@ public class FireEditor extends JFrame {
         this.setVisible(true);
     }
 
-    private void saveFile() {
-        FileDialog dg = new FileDialog(this,"save file");//创建一个具有指定标题的文件对话框窗口，用于加载文件
-        dg.setFile("untitled.txt");
+    private void saveFile() {//保存文件
+        FileDialog dg = new FileDialog(this,"Save File");//创建一个具有指定标题的文件对话框窗口，用于加载文件
+        dg.setFile("untitled.txt");//设置需要保存文件的后缀
         dg.setMode(FileDialog.SAVE);//设置为保存模式
         dg.setVisible(true);
         String fileName = dg.getFile();//获取文件名
@@ -94,13 +94,14 @@ public class FireEditor extends JFrame {
         }
     }
 
+    //打开目录或文件
     private void openDirOrFile(String absolutePath){
         File file = new File(absolutePath);
         //absolutePath:指定目录或文件的绝对路径名
         if(!(file.exists()))//判断文件或目录是否存在
         {
             editArea.setText("The file does not exits!");
-        }else if(file.isDirectory())
+        }else if(file.isDirectory())//判断是否是一个目录
         {
             editArea.setText(null);
             showDir(file);

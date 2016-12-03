@@ -13,6 +13,7 @@ import java.io.InputStream;
 @SuppressWarnings("serial")//压制信息
 public class FileWindow extends JFrame implements ActionListener,Runnable{
 
+    //定义两个线程，一个用于编译，一个用于运行程序
     Thread compiler = null;
     Thread run_prom = null;
     boolean bn = true;
@@ -89,9 +90,9 @@ public class FileWindow extends JFrame implements ActionListener,Runnable{
             mycard.show(p,"dos");
         }else if(e.getSource() == button_compiler)//编译程序
         {
-            if(!(compiler.isAlive()))//测试线程是否处于活动状态
+            if(!(compiler.isAlive()))//测试compiler线程是否处于活动状态
             {
-                compiler = new Thread(this);
+                compiler = new Thread(this);//如果不处于活动状态，则创建新的线程
             }
             try{
                 compiler.start();
