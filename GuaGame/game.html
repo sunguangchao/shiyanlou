@@ -13,32 +13,68 @@
 
 <script>
 var log = console.log.bind(console)
-var canvas = document.querySelector("#id-canvas")
-var context = canvas.getContext('2d')
 
-var x = 100
-var y = 200
-
-var img = new Image()
-img.src = 'paddle.png'
-log(img)
-img.onload = function(){
-  context.drawImage(img, x, y)
+var imageFromPath = function(path){
+    var img = new Image()
+    img.src = path
+    return img
 }
 
-window.addEventListener('keydown', function(event){
-  log('keydown')
-  var k = event.key
-  if (k == 'a') {
-    x -= 10
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    context.drawImage(img, x, y)
-  }else if (k == 'd') {
-    x += 10
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    context.drawImage(img, x, y)
+var Paddle = function(){
+  var image = imageFromPath('paddle.png')
+  var o = {
+    image: image,
+    x: 100,
+    y: 200,
+    speed: 5
   }
-})
+  return o
+}
+
+
+var __main = function(){
+  var canvas = document.querySelector("#id-canvas")
+  var context = canvas.getContext('2d')
+  var leftDown = false
+  var rigntDown = false
+  var paddle = new Paddle()
+
+  window.addEventListener('keydown', function(event){
+    log('keydown')
+    var k = event.key
+    if (k == 'a') {
+      leftDown = true
+    }else if (k == 'd') {
+      rigntDown = true
+    }
+  })
+  //¼üËÉ¿ªµÄÊ±ºò
+  window.addEventListener('keyup', function(event){
+    log('keyup')
+    var k = event.key
+    if (k == 'a') {
+      leftDown = false
+    }else if (k == 'd') {
+      rigntDown = false
+    }
+  })
+
+  setInterval(function(){
+    //update x and y
+    // draw
+    if (leftDown) {
+      paddle.x -= paddle.speed
+    }else if(rigntDown){
+      paddle.x += paddle.speed
+    }
+    //clamp x
+    //draw
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.drawImage(paddle.img, paddle.x, paddle.y)
+  }, 1000/30)
+
+
+__main()
 
 </script>
   </body>
