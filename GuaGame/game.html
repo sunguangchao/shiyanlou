@@ -26,18 +26,45 @@ var Paddle = function(){
     image: image,
     x: 100,
     y: 200,
-    speed: 5
+    speed: 5,
+  }
+  var paddle = o
+  o.moveLeft = function(){
+    //这里paddle应该为o的
+    paddle.x -= paddle.speed
+  }
+
+  o.moveRight = function(){
+    paddle.x += paddle.speed
   }
   return o
 }
 
-
-var __main = function(){
+var GuaGame = function(){
+  var g = {}
   var canvas = document.querySelector("#id-canvas")
   var context = canvas.getContext('2d')
+  g.canvas = canvas
+  g.context = context
+  setInterval(function(){
+    //update
+    //draw
+    g.update()
+    //clear
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    g.draw()
+  }, 1000/30)
+  return g
+}
+
+
+var __main = function(){
+  var game = new GuaGame()
+  var paddle = new Paddle()
+
+
   var leftDown = false
   var rigntDown = false
-  var paddle = new Paddle()
 
   window.addEventListener('keydown', function(event){
     log('keydown')
@@ -58,22 +85,21 @@ var __main = function(){
       rigntDown = false
     }
   })
-
-  setInterval(function(){
+  game.update = function(){
     //update x and y
     // draw
     if (leftDown) {
-      paddle.x -= paddle.speed
+
+      paddle.moveLeft()
     }else if(rigntDown){
-      paddle.x += paddle.speed
+
+      paddle.moveRight()
     }
-    //clamp x
-    //draw
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    context.drawImage(paddle.img, paddle.x, paddle.y)
-  }, 1000/30)
-
-
+  }
+  game.draw = function(){
+    game.context.drawImage(paddle.image, paddle.x, paddle.y)
+  }
+}
 __main()
 
 </script>
