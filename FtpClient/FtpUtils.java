@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by 11981 on 2017/11/9.
+ * reference:http://blog.csdn.net/xiaoxing1021/article/details/60771782
  */
 public class FtpUtils {
     private final static Log LOGGER = LogFactory.getLog(FtpUtils.class);
@@ -95,9 +96,9 @@ public class FtpUtils {
     }
 
     /**
-     *
-     * @param fileName
-     * @param newFileName
+     * 从ftp服务器下载到本地
+     * @param fileName 本地生成的文件名
+     * @param newFileName 服务器上的文件名
      * @return
      * @throws IOException
      * @throws FtpProtocolException
@@ -178,6 +179,9 @@ public class FtpUtils {
         return false;
     }
 
+    /**
+     * 断开与ftp服务器的连接
+     */
     public void closeServer(){
         try {
             if (ftpClient != null){
@@ -218,5 +222,74 @@ public class FtpUtils {
 
     public void cd(String path) throws Exception{
         ftpClient.changeDirectory(path);
+    }
+
+
+    /**
+     *
+     * @param fileName
+     * @param newName
+     * @return -1文件不存在，-2文件为空，>0成功上传，返回文件大小
+     * @throws Exception
+     */
+    public long uploadByteFile(String fileName, String newName) throws Exception{
+        long result = 0;
+        TelnetOutputStream os = null;
+        FileInputStream is = null;
+        try {
+            File fileIn = new File(fileName);
+            if (!fileIn.exists()){
+                return -1;
+            }
+            if (fileIn.length() == 0){
+                return -2;
+            }
+            os = (TelnetOutputStream) ftpClient.putFileStream(newName, true);
+            result = fileIn.length();
+            is = new FileInputStream(fileIn);
+            byte[] bytes = new byte[1024];
+            int c;
+            while ((c = is.read(bytes)) != -1){
+                os.write(bytes, 0, c);
+            }
+        }finally {
+            if (is != null){
+                is.close();
+            }
+            if (os != null){
+                os.close();
+            }
+        }
+        return result;
+    }
+
+    public void mkdir(String path, String dir) throws Exception{
+        //切换到文件夹下
+        ftpClient.changeDirectory(path);
+        //创建远程文件夹
+        if (dir.contains("/")){
+            String[] dirArray = dir.split("/");
+            for (String d:dirArray){
+                if (d != null && "".equals(d)){
+                    ftpClient.makeDirectory(dir);
+                    ftpClient.changeDirectory(dir);
+                }
+            }
+        }
+
+        ftpClient.setBinaryType();
+        ftpClient.getLastResponseString();
+    }
+
+    //移除路径
+    public void rmdir(String path, String dir) throws Exception{
+        ftpClient.changeDirectory(path);
+        ftpClient.removeDirectory(dir);
+        ftpClient.setBinaryType();
+        ftpClient.getLastResponseString();
+    }
+
+    public void setTransferProtocolType(String transferProtocolType) throws Exception{
+        ftpClient.enablePassiveMode(true);
     }
 }
