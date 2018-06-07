@@ -26,11 +26,14 @@ var Paddle = function(){
     image: image,
     x: 100,
     y: 300,
+    //自己加的，没有效果
+    // w: 376,
+    // h: 126,
     speed: 15,
   }
   var paddle = o
   o.moveLeft = function(){
-    //����paddleӦ��Ϊo��
+    //
     paddle.x -= paddle.speed
   }
 
@@ -38,13 +41,14 @@ var Paddle = function(){
     paddle.x += paddle.speed
   }
   o.collide = function(ball){
-    if (ball.y + ball.image.height > o.y) {
-      if (ball.x > o.x && ball.x < o.x + o.image.width) {
-        log('��ײ')
-        return true
-      }
-    }
-    return false
+    // if (ball.y + ball.image.height > o.y) {
+    //   if (ball.x > o.x && ball.x < o.x + o.image.width) {
+    //     log('相撞')
+    //     return true
+    //   }
+    // }
+    // return false
+    return rectIntersects(o,ball) || rectIntersects(ball, o)
   }
   return o
 }
@@ -55,8 +59,8 @@ var Ball = function(){
     image: image,
     x: 50,
     y: 50,
-    speedX: 10,
-    speedY: 10,
+    speedX: 5,
+    speedY: 5,
     fired: false
   }
   o.fire = function(){
@@ -71,11 +75,44 @@ var Ball = function(){
       if (o.y < 0 || o.y > 500) {
         o.speedY = -o.speedY
       }
-
       //move
       o.x += o.speedX
       o.y += o.speedY
     }
+  }
+  o.反弹 = function(){
+    o.speedY *= -1
+  }
+  return o
+}
+
+var rectIntersects = function(a, b){
+  var o = a;
+  if (b.y > o.y && b.y < o.y + o.image.height) {
+    if (b.x > o.x && b.x < o.x + o.image.width) {
+      log('相撞')
+      return true
+    }
+  }
+  return false
+}
+
+var Block = function(){
+  var image = imageFromPath('block.png')
+  var o = {
+    image: image,
+    x: 100,
+    y: 100,
+    w: 50,
+    h: 20,
+    alive: true,
+  }
+  o.kill = function(){
+    o.alive = false;
+  }
+  //检测相撞
+  o.collide = function(b){
+      return o.alive && (rectIntersects(o,b) || rectIntersects(b, o))
   }
   return o
 }
@@ -112,7 +149,7 @@ var GuaGame = function(){
     for (var i = 0; i < actions.length; i++) {
       var key = actions[i]
       if (g.keydowns[key]) {
-        //�����������£�����ע���� action
+        //如果按键被按下，调用注册的 action
         g.actions[key]()
       }
     }
@@ -121,7 +158,8 @@ var GuaGame = function(){
     //clear
     context.clearRect(0, 0, canvas.width, canvas.height)
     g.draw()
-  }, 1000/30)
+    //调整帧数
+  }, 1000/60)
 
   return g
 }
@@ -131,6 +169,13 @@ var __main = function(){
   var game = GuaGame()
   var paddle = Paddle()
   var ball = Ball()
+  var blocks = []
+  for (var i = 0; i < 3; i++) {
+    var b = Block()
+    b.x = i * 200
+    b.y = 50
+    blocks.push(b)
+  }
 
   var leftDown = false
   var rigntDown = false
@@ -146,17 +191,32 @@ var __main = function(){
   })
   game.update = function(){
     ball.move()
-    //�ж���ײ
+    //判断相撞
     if (paddle.collide(ball)) {
-      //����Ӧ�õ���һ�� ball.����() ��ʵ��
-      ball.speedY *= -1
-
+      //这里应该调用一个 ball.反弹() 来实现
+      ball.反弹()
+    }
+    //判断ball和block相撞
+    for (var i = 0; i < 3; i++) {
+      var block = blocks[i]
+      if (block.collide(ball)) {
+        log('block 相撞')
+        block.kill()
+        ball.反弹()
+      }
     }
   }
   game.draw = function(){
     // game.context.drawImage(paddle.image, paddle.x, paddle.y)
     game.drawImage(paddle)
     game.drawImage(ball)
+    for (var i = 0; i < 3; i++) {
+      var block = blocks[i]
+      //draw block
+      if (block.alive) {
+        game.drawImage(block)
+      }
+    }
   }
 }
 __main()
