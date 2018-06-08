@@ -7,179 +7,38 @@
         border: 1px black solid;
       }
     </style>
+    <script src='guagame.js'></script>
+    <script src='ball.js'></script>
+    <script src='paddle.js'></script>
+    <script src='block.js'></script>
+    <script src='utils.js'></script>
+    <script src='level.js'></script>
   </head>
   <body>
       <canvas id="id-canvas" width="600" height="500"></canvas>
 
 <script>
-var log = console.log.bind(console)
-
-var imageFromPath = function(path){
-    var img = new Image()
-    img.src = path
-    return img
-}
-
-var Paddle = function(){
-  var image = imageFromPath('paddle.png')
-  var o = {
-    image: image,
-    x: 100,
-    y: 300,
-    //自己加的，没有效果
-    // w: 376,
-    // h: 126,
-    speed: 15,
-  }
-  var paddle = o
-  o.moveLeft = function(){
-    //
-    paddle.x -= paddle.speed
-  }
-
-  o.moveRight = function(){
-    paddle.x += paddle.speed
-  }
-  o.collide = function(ball){
-    // if (ball.y + ball.image.height > o.y) {
-    //   if (ball.x > o.x && ball.x < o.x + o.image.width) {
-    //     log('相撞')
-    //     return true
-    //   }
-    // }
-    // return false
-    return rectIntersects(o,ball) || rectIntersects(ball, o)
-  }
-  return o
-}
-
-var Ball = function(){
-  var image = imageFromPath('ball.png')
-  var o = {
-    image: image,
-    x: 50,
-    y: 50,
-    speedX: 5,
-    speedY: 5,
-    fired: false
-  }
-  o.fire = function(){
-    o.fired = true
-  }
-  o.move = function(){
-    log('move')
-    if (o.fired) {
-      if (o.x < 0 || o.x > 600) {
-        o.speedX = -o.speedX
-      }
-      if (o.y < 0 || o.y > 500) {
-        o.speedY = -o.speedY
-      }
-      //move
-      o.x += o.speedX
-      o.y += o.speedY
-    }
-  }
-  o.反弹 = function(){
-    o.speedY *= -1
-  }
-  return o
-}
-
-var rectIntersects = function(a, b){
-  var o = a;
-  if (b.y > o.y && b.y < o.y + o.image.height) {
-    if (b.x > o.x && b.x < o.x + o.image.width) {
-      log('相撞')
-      return true
-    }
-  }
-  return false
-}
-
-var Block = function(){
-  var image = imageFromPath('block.png')
-  var o = {
-    image: image,
-    x: 100,
-    y: 100,
-    w: 50,
-    h: 20,
-    alive: true,
-  }
-  o.kill = function(){
-    o.alive = false;
-  }
-  //检测相撞
-  o.collide = function(b){
-      return o.alive && (rectIntersects(o,b) || rectIntersects(b, o))
-  }
-  return o
-}
-
-var GuaGame = function(){
-  var g = {
-    actions: {},
-    keydowns: {},
-  }
-  var canvas = document.querySelector("#id-canvas")
-  var context = canvas.getContext('2d')
-  g.canvas = canvas
-  g.context = context
-  //draw
-  g.drawImage = function(guaImage){
-    g.context.drawImage(guaImage.image, guaImage.x, guaImage.y)
-  }
-  //events
-  window.addEventListener('keydown', function(event){
-    g.keydowns[event.key] = true
-  })
-
-  window.addEventListener('keyup', function(event){
-    g.keydowns[event.key] = false
-  })
-
-  g.registerAction = function(key, callback){
-    g.actions[key] = callback
-  }
-  //timer
-  setInterval(function(){
-    //events
-    var actions = Object.keys(g.actions)
-    for (var i = 0; i < actions.length; i++) {
-      var key = actions[i]
-      if (g.keydowns[key]) {
-        //如果按键被按下，调用注册的 action
-        g.actions[key]()
-      }
-    }
-    //update
-    g.update()
-    //clear
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    g.draw()
-    //调整帧数
-  }, 1000/60)
-
-  return g
-}
-
-
-var __main = function(){
-  var game = GuaGame()
-  var paddle = Paddle()
-  var ball = Ball()
+var loadLevel = function(n){
+  n = n - 1
+  var level = levels[n]
   var blocks = []
-  for (var i = 0; i < 3; i++) {
-    var b = Block()
-    b.x = i * 200
-    b.y = 50
+  for (var i = 0; i < level.length; i++) {
+    var p = level[i]
+    var b = Block(p)
     blocks.push(b)
   }
+  return blocks
+}
+var blocks = []
+var __main = function(){
+  var game = GuaGame(60)
+  var paddle = Paddle()
+  var ball = Ball()
+  blocks = loadLevel(1)
 
   var leftDown = false
   var rigntDown = false
-
+  var paused = false
   game.registerAction('a', function(){
     paddle.moveLeft()
   })
@@ -189,7 +48,23 @@ var __main = function(){
   game.registerAction('f', function(){
     ball.fire()
   })
+  //注册一个按键
+  // game.registerAction('p', function(){
+  //   paused = !paused
+  // })
+  window.addEventListener('keydown', function(event){
+    if (event.key == 'p') {
+      paused = !paused
+    }else if (event.key == '1'){
+      blocks = loadLevel(1)
+    }else if (event.key == '2') {
+      blocks = loadLevel(2)
+    }
+  })
   game.update = function(){
+    if(paused){
+      return
+    }
     ball.move()
     //判断相撞
     if (paddle.collide(ball)) {
@@ -197,7 +72,7 @@ var __main = function(){
       ball.反弹()
     }
     //判断ball和block相撞
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i]
       if (block.collide(ball)) {
         log('block 相撞')
@@ -210,7 +85,7 @@ var __main = function(){
     // game.context.drawImage(paddle.image, paddle.x, paddle.y)
     game.drawImage(paddle)
     game.drawImage(ball)
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i]
       //draw block
       if (block.alive) {
