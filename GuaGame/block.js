@@ -1,16 +1,20 @@
-var Block = function(position){
+var Block = function(game, position){
   var p = position
-  var image = imageFromPath('block.png')
+  var img = game.imageByName('block')
   var o = {
-    image: image,
     x: p[0],
     y: p[1],
-    w: 50,
-    h: 20,
     alive: true,
+    lifes: p[2] || 1,
   }
+  o.image = img.image
+  o.w = img.w
+  o.h = img.h
   o.kill = function(){
-    o.alive = false
+    o.lifes--
+    if (o.lifes < 1) {
+      o.alive = false
+    }
   }
   //检测相撞
   o.collide = function(b){

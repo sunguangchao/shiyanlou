@@ -1,14 +1,17 @@
-var Paddle = function(){
-  var image = imageFromPath('paddle.png')
-  var o = {
-    image: image,
-    x: 100,
-    y: 300,
-    //自己加的，没有效果
-    w: 376,
-    h: 126,
-    speed: 15,
-  }
+var Paddle = function(game){
+  var o = game.imageByName('paddle')
+  // var o = {
+  //   image: image,
+  //   x: 100,
+  //   y: 300,
+  //   //自己加的，没有效果
+  //   w: 376,
+  //   h: 126,
+  //   speed: 15,
+  // }
+  o.x = 100
+  o.y = 250
+  o.speed = 15
   var paddle = o
   o.move = function(x){
     if (x < 0) {

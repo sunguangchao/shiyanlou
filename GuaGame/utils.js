@@ -1,3 +1,9 @@
+//另一种log显示形式
+// var e = sel => document.querySelector(sel)
+// var log = function(s){
+//   e('#id-text-log').value += '\n' + s
+// }
+
 var log = console.log.bind(console)
 
 var imageFromPath = function(path){
@@ -5,6 +11,7 @@ var imageFromPath = function(path){
     img.src = path
     return img
 }
+
 var rectIntersects = function(a, b){
   var o = a
   if (b.y > o.y && b.y < o.y + o.image.height) {
